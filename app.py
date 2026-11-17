@@ -133,7 +133,7 @@ with tab_projection:
         color=alt.Color("Scenario:N", scale=colors, legend=None),
     )
     chart = (band + lines + labels).properties(height=400).configure_view(strokeWidth=0)
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     st.caption(f"The shaded area is the cost of a {return_drop:g} point lower return: {md_money(gap)} less at "
                f"{retirement_age}. Small changes in the return assumption compound over time.")
 
@@ -150,7 +150,7 @@ with tab_scenario:
     comparison = pd.DataFrame({base_label: summary(base), low_label: summary(low)})
     comparison["Difference"] = comparison[low_label] - comparison[base_label]
     st.dataframe(comparison.style.format(lambda v: f"-${-v:,.0f}" if v < 0 else f"${v:,.0f}"),
-                 use_container_width=True)
+                 width="stretch")
     st.caption("Contributions are the same in both scenarios. The whole difference comes from lower investment "
                "returns, partly offset by lower fees on a smaller balance.")
 
@@ -158,7 +158,7 @@ with tab_scenario:
 with tab_table:
     st.dataframe(
         base.style.format("${:,.0f}", subset=list(base.columns[2:])),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         height=420,
     )
@@ -184,7 +184,7 @@ with tab_method:
                 "Excel final balance": "${:,.2f}",
                 "Max abs difference": "${:.5f}",
             }),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
     st.markdown("**Not modelled:** tax, inflation, insurance, fixed-dollar fees, contribution caps and "
