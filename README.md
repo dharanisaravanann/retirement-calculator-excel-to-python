@@ -1,10 +1,25 @@
 # Retirement Balance Calculator: Excel to Python
 
-> **Illustrative model, not financial advice.** It shows how assumptions combine. It does not predict anyone's actual retirement balance. All numbers are made-up examples; no real customer or company data is used.
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://retirement-calculatorapp.streamlit.app)
 
-This project takes an Excel retirement projection model, rebuilds it as tested Python, reconciles the two, and puts it behind a simple web calculator for non-technical users.
+**Live app:** [retirement-calculatorapp.streamlit.app](https://retirement-calculatorapp.streamlit.app)
+
+An Excel retirement projection model, rebuilt as tested Python, reconciled cell by cell against Excel, and turned into a web calculator that anyone can use.
 
 ![Streamlit app](screenshot.jpg)
+
+## At a glance
+
+| | |
+|---|---|
+| **Reconciliation** | Python matches Excel to within **$0.00005** across **5 test cases**, every year and every money column |
+| **Tests** | 5 / 5 pytest tests pass |
+| **Key insight** | In the base case, a return just 2 points lower cuts the balance at retirement by **35.9%** ($858K) |
+| **Built with** | Python · pandas · Streamlit · Altair · openpyxl · pytest · Excel |
+
+**What this project shows:** translating a business spreadsheet into maintainable code, proving the two agree with automated tests, documenting assumptions and limitations, and presenting the result in plain English for non-technical users.
+
+> **Illustrative model, not financial advice.** It shows how assumptions combine. It does not predict anyone's actual retirement balance. All numbers are made-up examples; no real customer or company data is used.
 
 ## What's here
 
@@ -14,7 +29,7 @@ This project takes an Excel retirement projection model, rebuilds it as tested P
 | `model.py` | The Python version. `project(Inputs)` returns the same year-by-year table as a pandas DataFrame. Also holds the 5 test cases. |
 | `test_reconciliation.py` | Runs the 5 test cases and compares Python against Excel, cell by cell. |
 | `app.py` | Streamlit calculator: plain-English summary, balance-over-time chart, lower-return scenario comparison, year-by-year table, and a live Python-vs-Excel reconciliation check. |
-| `.streamlit/config.toml` | App theme (neutral navy accent, light background). |
+| `.streamlit/config.toml` | App theme (warm cocoa and cream palette, DM Sans and Fraunces fonts). |
 | `build_excel.py` | Generates `retirement_model.xlsx` from the same test cases, so the workbook is reproducible. |
 | `export_excel_values.py` | (macOS + Excel) Has Excel calculate the workbook and saves Excel's own values to `excel_outputs.csv`. |
 | `excel_outputs.csv` | The values Excel calculated, used by the reconciliation test. |
@@ -64,6 +79,8 @@ Five cases, every year and every money column compared (opening balance, contrib
 Sensitivity (from the app, base case): a return 2 percentage points lower (5% instead of 7%) cuts the balance at 67 from $2,388,977 to $1,531,003, a fall of $857,975 (35.9%).
 
 ## How to run
+
+Or just use the [live app](https://retirement-calculatorapp.streamlit.app). To run it locally (tested on Python 3.14):
 
 ```bash
 python3 -m venv .venv
