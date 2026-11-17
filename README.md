@@ -6,7 +6,7 @@
 
 An Excel retirement projection model, rebuilt as tested Python, reconciled cell by cell against Excel, and turned into a web calculator that anyone can use.
 
-![Streamlit app](screenshot.jpg)
+![Streamlit app](app-screenshot.png)
 
 ## At a glance
 
