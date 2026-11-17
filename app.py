@@ -6,11 +6,12 @@ import streamlit as st
 
 from model import Inputs, project
 
-NAVY = "#1F4E79"
-ORANGE = "#E8833A"
-MUTED = "#5A6472"
+COCOA = "#7A5240"      # base case
+BERRY = "#C9677E"      # lower-return scenario
+MUTED = "#7A6152"
+GRID = "#EADCCB"
 
-st.set_page_config(page_title="Retirement Balance Calculator", layout="wide")
+st.set_page_config(page_title="Retirement Balance Calculator", page_icon="📈", layout="wide")
 
 
 def short_money(value: float) -> str:
@@ -63,6 +64,8 @@ base_inputs = Inputs(int(current_age), int(retirement_age), float(starting_balan
                      expected_return / 100, fee_rate / 100, contribution_growth / 100)
 low_inputs = Inputs(**{**base_inputs.__dict__, "expected_return": (expected_return - return_drop) / 100})
 
+st.markdown(f"<p style='letter-spacing:.16em;font-size:.8rem;color:{BERRY};margin:0 0 -.6rem'>"
+            "PYTHON · STREAMLIT · RECONCILED TO EXCEL</p>", unsafe_allow_html=True)
 st.title("Retirement balance calculator")
 st.caption("Illustrative model, not financial advice. It doesn't predict your actual balance. "
            "Default figures are made-up examples.")
@@ -83,9 +86,9 @@ low_label = f"Lower return ({expected_return - return_drop:.2f}%)"
 # ---- Summary ----
 st.markdown(
     f"Based on these assumptions, the balance at {retirement_age} is about "
-    f"<span style='color:{NAVY};font-weight:600'>{md_money(base_final)}</span>. "
+    f"<span style='color:{COCOA};font-weight:700'>{md_money(base_final)}</span>. "
     f"If returns are {return_drop:g} points lower, it's about "
-    f"<span style='color:#C8642A;font-weight:600'>{md_money(low_final)}</span>.",
+    f"<span style='color:{BERRY};font-weight:700'>{md_money(low_final)}</span>.",
     unsafe_allow_html=True,
 )
 
@@ -112,15 +115,15 @@ with tab_projection:
     ])
     x = alt.X("Age:Q", title="Age (start of year)", scale=alt.Scale(nice=False),
               axis=alt.Axis(grid=False, tickMinStep=1, format="d"))
-    y_axis = alt.Axis(gridColor="#EEF1F4", labelExpr=(
+    y_axis = alt.Axis(gridColor=GRID, labelExpr=(
         "datum.value >= 1e6 ? '$' + format(datum.value / 1e6, '.1f') + 'M'"
         " : datum.value >= 1e3 ? '$' + format(datum.value / 1e3, '.0f') + 'K' : '$0'"))
-    colors = alt.Scale(domain=[base_label, low_label], range=[NAVY, ORANGE])
+    colors = alt.Scale(domain=[base_label, low_label], range=[COCOA, BERRY])
 
-    band = alt.Chart(wide).mark_area(color=NAVY, opacity=0.08).encode(
+    band = alt.Chart(wide).mark_area(color=BERRY, opacity=0.12).encode(
         x=x, y=alt.Y("Low:Q"), y2="Base:Q", tooltip=alt.value(None)
     )
-    lines = alt.Chart(long).mark_line(strokeWidth=2.5).encode(
+    lines = alt.Chart(long).mark_line(strokeWidth=3).encode(
         x=x,
         y=alt.Y("Closing balance:Q", title=None, axis=y_axis),
         color=alt.Color("Scenario:N", scale=colors, legend=alt.Legend(orient="top", title=None)),
@@ -132,7 +135,14 @@ with tab_projection:
         x="Age:Q", y="Closing balance:Q", text="Label:N",
         color=alt.Color("Scenario:N", scale=colors, legend=None),
     )
-    chart = (band + lines + labels).properties(height=400).configure_view(strokeWidth=0)
+    chart = (
+        (band + lines + labels).properties(height=400, background="transparent")
+        .configure_view(strokeWidth=0)
+        .configure_axis(labelColor=MUTED, titleColor=MUTED, domainColor=GRID, tickColor=GRID,
+                        labelFont="DM Sans", titleFont="DM Sans", labelFontSize=12)
+        .configure_legend(labelColor="#3A261C", labelFont="DM Sans", labelFontSize=13, symbolStrokeWidth=4)
+        .configure_text(font="DM Sans")
+    )
     st.altair_chart(chart, width="stretch")
     st.caption(f"The shaded area is the cost of a {return_drop:g} point lower return: {md_money(gap)} less at "
                f"{retirement_age}. Small changes in the return assumption compound over time.")
